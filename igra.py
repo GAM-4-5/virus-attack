@@ -5,6 +5,7 @@ import random
 
 # ovo je za lakši pristup tipkama za pomicanje
 from pygame.locals import (
+    RLEACCEL,
     K_UP,
     K_DOWN,
     K_LEFT,
@@ -23,8 +24,8 @@ SCREEN_HEIGHT = 600
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super(Player, self).__init__()
-        self.surf = pygame.Surface((75, 25))
-        self.surf.fill((255, 255, 255))
+        self.surf = pygame.image.load("man.jpg").convert()
+        self.surf.set_colorkey((0,0,0), RLEACCEL)
         self.rect = self.surf.get_rect()
         
     # funkcija update pomiče igrača s obzirom na pritisnute tipke
@@ -53,8 +54,8 @@ class Player(pygame.sprite.Sprite):
 class Enemy(pygame.sprite.Sprite):
     def __init__(self):
         super(Enemy, self).__init__()
-        self.surf = pygame.Surface((20, 10))
-        self.surf.fill((255, 255, 255))
+        self.surf = pygame.image.load("virus.png").convert()
+        self.surf.set_colorkey((0,0,0), RLEACCEL)
         self.rect = self.surf.get_rect(
             center=(
                 random.randint(SCREEN_WIDTH + 20, SCREEN_WIDTH + 100),
