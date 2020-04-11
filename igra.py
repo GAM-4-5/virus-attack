@@ -128,9 +128,6 @@ while running:
      # funkcijom blit crtamo objekte(spriteove) na prozoru
     for entity in all_sprites:
         screen.blit(entity.surf, entity.rect)
-        
-    # Draw the player on the screen
-    screen.blit(player.surf, player.rect)
 
     # pygame ima funkciju za provjeravanje ako je došlo do sudara igrača i neprijatelja
     if pygame.sprite.spritecollideany(player, enemies):
