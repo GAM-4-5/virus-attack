@@ -104,17 +104,21 @@ pygame.mixer.init()
 # initializacija 
 pygame.init()
 
-# clock nam određuje framerate
-clock = pygame.time.Clock()
+
 
 # stvaramo prozor
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-
+zaraza=pygame.mixer.Sound('zaraza.ogg')
+win=pygame.mixer.Sound('win.ogg')
+nema=pygame.mixer.Sound('nema.ogg')
+ima=pygame.mixer.Sound('ima.ogg')
 # stvaramo novi event koji će se ponavljati svakij 250 milisekundi
 ADDENEMYR = pygame.USEREVENT + 2
 pygame.time.set_timer(ADDENEMYR, 500)
 ADDENEMYL = pygame.USEREVENT + 1
 pygame.time.set_timer(ADDENEMYL, 500)
+NEMAPAPIRA = pygame.USEREVENT +3
+pygame.time.set_timer(NEMAPAPIRA, 4500)
 
 
 #funkcije kojima ćemo prikazati tekst na ekranu
@@ -127,15 +131,23 @@ def message_display(text):
     TextSurf, TextRect = text_objects(text, largeText)
     TextRect.center = (int(SCREEN_WIDTH/2),int(SCREEN_HEIGHT/2))
     screen.blit(TextSurf, TextRect)
-
-    
     
     pygame.display.update()
 
     pygame.mixer.music.stop()
 
-    zaraza.play()
+    
+    
 
+def pobjeda():
+    message_display('Čestitam')
+    win.play()
+    pygame.time.delay(6000)
+    screen.fill(black)
+    game_loop()
+def crash():
+    message_display('Zaražen!')
+    zaraza.play()
 
     pygame.time.delay(3000)
     
@@ -143,23 +155,22 @@ def message_display(text):
 
     game_loop()
     
-
-def crash():
-    message_display('Zaražen!')
-    
     
 # stvaramo grupe za viruse i za sve objekte na ekranu(spriteove)
 
 # stvaramo playera
 
 #dodajemo muziku i zvučne efekte u mixer 
-pygame.mixer.music.load("music.mp3")
-pygame.mixer.music.play(loops=-1)
 
-zaraza=pygame.mixer.Sound('zaraza.ogg')
 
 def game_loop():
     # pokrećemo loop
+    # clock nam određuje framerate
+    clock = pygame.time.Clock()
+    pygame.mixer.music.load("music.mp3")
+    pygame.mixer.music.play(loops=-1)
+    nema.play()
+    x=0
     player = Player()
     papir = Papir()
     enemies = pygame.sprite.Group()
@@ -198,6 +209,9 @@ def game_loop():
                 enemies.add(new_enemy)
                 all_sprites.add(new_enemy)
 
+            elif event.type == NEMAPAPIRA:
+                nema.play()
+
 
                 
         # dobivamo rjecnik svih pritisnutih tipki
@@ -219,23 +233,35 @@ def game_loop():
             
         #pa igrača
         screen.blit(player.surf, player.rect)
-        screen.blit(papir.surf, (SCREEN_WIDTH-80, SCREEN_HEIGHT/2))
+        screen.blit(papir.surf, papir.rect)
+        if x == 0:
+            papir.rect.move_ip(1000,280)
+            player.rect.move_ip(40,260)
 
         # pygame ima funkciju za provjeravanje ako je došlo do sudara igrača i virusa
         if pygame.sprite.spritecollideany(player, enemies):
         # ako jest, loop se gasi
             player.kill()
+            nema.stop()
             running = False
             crash()
+            
         if pygame.sprite.collide_rect(player, papir):
-            papir.kill()
-            papir = Papir()
-            player.surf.blit(papir.surf, papir.rect)
+            nema.stop()
+            ima.play()
+            pobjeda()
+            print(papir.rect)
+            print(player.rect)
+            
+##            papir.kill()
+##            papir = Papir()
+##            player.surf.blit(papir.surf, papir.rect)
         # flip funkcija prikazuje sve ovo na prozoru
         pygame.display.flip()
 
         #za 30 fps-a
         clock.tick(30)
+        x+=1
     #gasimo muziku 
     
 game_loop()
