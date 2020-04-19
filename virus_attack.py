@@ -10,23 +10,24 @@ from pygame.locals import (
     K_DOWN,
     K_LEFT,
     K_RIGHT,
-    K_ESCAPE,
+    K_ESCAPE, 
     KEYDOWN,
     QUIT,
 )
 
 
-SCREEN_WIDTH = 1500
+SCREEN_WIDTH = 1300
 SCREEN_HEIGHT = 600
 black = (0,0,0)
 white = (255,255,255)
 red = (255,0,0)
-
+Ljudi=['man.jpg','man2.jpg','man3.jpg','man4.jpg','woman1.jpg','woman2.jpg','woman3.jpg','woman4.jpg']
+broj_zar =0
 # radimo klasu player pomoću pyvirusovog spritea
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super(Player, self).__init__()
-        self.surf = pygame.image.load("man.jpg").convert()
+        self.surf = pygame.image.load(Ljudi[random.randint(0,7)]).convert()
         self.surf.set_colorkey((0,0,0), RLEACCEL)
         self.rect = self.surf.get_rect()
 ##        self.rect+=((SCREEN_WIDTH/2, SCREEN_HEIGHT/2),(0,0))
@@ -131,8 +132,12 @@ def message_display(text):
 
     pygame.mixer.music.stop()
 
-    
-    
+def count(text):
+    largeText = pygame.font.Font('freesansbold.ttf',30)
+    TextSurf, TextRect = text_objects('{} Zaraženih'.format(str(text)), largeText)
+    TextRect= (20,20)
+    screen.blit(TextSurf, TextRect)
+    pygame.display.update()
 
 def pobjeda():
     message_display('Čestitam')
@@ -150,7 +155,7 @@ def crash():
 
     game_loop()
     
-    
+
 # stvaramo grupe za viruse i za sve objekte na ekranu(spriteove)
 
 # stvaramo playera
@@ -158,9 +163,12 @@ def crash():
 #dodajemo muziku i zvučne efekte u mixer 
 
 
+
 def game_loop():
     # pokrećemo loop
     # clock nam određuje framerate
+    global broj_zar
+    global zar
     clock = pygame.time.Clock()
     pygame.mixer.music.load("music.mp3")
     pygame.mixer.music.play(loops=-1)
@@ -181,7 +189,7 @@ def game_loop():
     running = True
 
     while running:
-
+        
         
         # za svaki događaj
         for event in pygame.event.get():
@@ -225,8 +233,10 @@ def game_loop():
         enemies.update()
 
 
-        # bojamo prozor u bijelo
+        # bojamo prozor u crno
         screen.fill((0, 0, 0))
+
+        count(broj_zar)
 
         # funkcijom blit crtamo objekte(spriteove) na prozoru
         for entity in all_sprites:
@@ -247,6 +257,7 @@ def game_loop():
             pygame.time.set_timer(ADDENEMYR, 3000)
             pygame.time.set_timer(ADDENEMYL, 3000)
             pygame.time.set_timer(NEMAPAPIRA, 8000)
+            broj_zar+=1
             nema.stop()
             running = False
             crash()
