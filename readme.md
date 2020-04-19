@@ -2,4 +2,4 @@ Došlo je do globalne pandemije,a ljudi nemaju papira😲! Pomozi im da sakupe p
 
 
 Novo:
-     Više likova za igru koji se nasumičo biraju, brojač zaraženih
+     Više likova za igru koji se nasumičo biraju, brojač zaraženih i skupljenog papira.
