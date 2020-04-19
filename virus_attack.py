@@ -23,6 +23,7 @@ white = (255,255,255)
 red = (255,0,0)
 Ljudi=['man.jpg','man2.jpg','man3.jpg','man4.jpg','woman1.jpg','woman2.jpg','woman3.jpg','woman4.jpg']
 broj_zar =0
+broj_pap=0
 # radimo klasu player pomoću pyvirusovog spritea
 class Player(pygame.sprite.Sprite):
     def __init__(self):
@@ -132,9 +133,9 @@ def message_display(text):
 
     pygame.mixer.music.stop()
 
-def count(text):
-    largeText = pygame.font.Font('freesansbold.ttf',30)
-    TextSurf, TextRect = text_objects('{} Zaraženih'.format(str(text)), largeText)
+def count(text1, text2):
+    largeText = pygame.font.Font('freesansbold.ttf',25)
+    TextSurf, TextRect = text_objects('{} Zaraženih   {} Papira'.format(str(text1), str(text2)), largeText)
     TextRect= (20,20)
     screen.blit(TextSurf, TextRect)
     pygame.display.update()
@@ -168,7 +169,7 @@ def game_loop():
     # pokrećemo loop
     # clock nam određuje framerate
     global broj_zar
-    global zar
+    global broj_pap
     clock = pygame.time.Clock()
     pygame.mixer.music.load("music.mp3")
     pygame.mixer.music.play(loops=-1)
@@ -236,7 +237,7 @@ def game_loop():
         # bojamo prozor u crno
         screen.fill((0, 0, 0))
 
-        count(broj_zar)
+        count(broj_zar, broj_pap)
 
         # funkcijom blit crtamo objekte(spriteove) na prozoru
         for entity in all_sprites:
@@ -264,6 +265,7 @@ def game_loop():
             
         if pygame.sprite.collide_rect(player, papir):
             nema.stop()
+            broj_pap+=1
             pygame.time.set_timer(ADDENEMYR, 3000)
             pygame.time.set_timer(ADDENEMYL, 3000)
             pygame.time.set_timer(NEMAPAPIRA, 8000)
