@@ -29,34 +29,7 @@ covjek=0
 broj_zar =0
 broj_pap=0
 
-class Player(pygame.sprite.Sprite):
-    def __init__(self):
-        super(Player, self).__init__()
-        self.surf = pygame.image.load(Ljudi[random.randint(0,7)]).convert()
-        self.surf.set_colorkey((0,0,0), RLEACCEL)
-        self.rect = self.surf.get_rect()
 
-        self.speed = 10
-
-    def update(self, pressed_keys):
-        if pressed_keys[K_UP]:
-            self.rect.move_ip(0, -self.speed)
-        if pressed_keys[K_DOWN]:
-            self.rect.move_ip(0, self.speed)
-        if pressed_keys[K_LEFT]:
-            self.rect.move_ip(-self.speed, 0)
-        if pressed_keys[K_RIGHT]:
-            self.rect.move_ip(self.speed, 0)
-
-
-        if self.rect.left < 0:
-            self.rect.left = 0
-        if self.rect.right > SCREEN_WIDTH:
-            self.rect.right = SCREEN_WIDTH
-        if self.rect.top <= 0:
-            self.rect.top = 0
-        if self.rect.bottom >= SCREEN_HEIGHT:
-            self.rect.bottom = SCREEN_HEIGHT
 
 class PlayerE(pygame.sprite.Sprite):
     def __init__(self):
@@ -128,7 +101,44 @@ class EnemyR(pygame.sprite.Sprite):
     def __init__(self):
         super(EnemyR, self).__init__()
         self.surf = pygame.image.load("virus.png").convert()
-        self.surf.set_colorkey((0,0,0), RLEACCEL)
+        self.surf.set_colorkey(black, RLEACCEL)
+        self.rect = self.surf.get_rect(
+            center=(
+                random.randint(SCREEN_WIDTH + 20, SCREEN_WIDTH + 100),
+                random.randint(0, SCREEN_HEIGHT),
+            )
+        )
+
+
+    def update(self):
+        self.rect.move_ip(-(random.randint(0,10)), random.randint(-10,10))
+        if self.rect.right < 0:
+            self.kill()
+
+class EnemyL(pygame.sprite.Sprite):
+    def __init__(self):
+        super(EnemyL, self).__init__()
+        self.surf = pygame.image.load("virus.png").convert()
+        self.surf.set_colorkey(black, RLEACCEL)
+        self.rect = self.surf.get_rect(
+            center=(
+                random.randint(-150,-100),
+                random.randint(0, SCREEN_HEIGHT),
+            )
+        )
+
+
+    def update(self):
+        self.rect.move_ip(abs(random.randint(-10,10)), random.randint(-10,10))
+        if self.rect.right > SCREEN_WIDTH:
+            self.kill()
+
+
+class EnemyI(pygame.sprite.Sprite):
+    def __init__(self):
+        super(EnemyI, self).__init__()
+        self.surf = pygame.image.load("virusI.png").convert()
+        self.surf.set_colorkey(white, RLEACCEL)
         self.rect = self.surf.get_rect(
             center=(
                 random.randint(SCREEN_WIDTH + 20, SCREEN_WIDTH + 100),
@@ -141,25 +151,7 @@ class EnemyR(pygame.sprite.Sprite):
         self.rect.move_ip(-abs(random.randint(-10,10)), random.randint(-10,10))
         if self.rect.right < 0:
             self.kill()
-
-class EnemyL(pygame.sprite.Sprite):
-    def __init__(self):
-        super(EnemyL, self).__init__()
-        self.surf = pygame.image.load("virus.png").convert()
-        self.surf.set_colorkey((0,0,0), RLEACCEL)
-        self.rect = self.surf.get_rect(
-            center=(
-                random.randint(-100,-0),
-                random.randint(0, SCREEN_HEIGHT),
-            )
-        )
-
-
-    def update(self):
-        self.rect.move_ip(abs(random.randint(-10,10)), random.randint(-10,10))
-        if self.rect.right < 0:
-            self.kill()
-
+            
 pygame.mixer.init()
 
 pygame.init()
@@ -207,13 +199,6 @@ def count(text1, text2):
     screen.blit(TextSurf, TextRect)
     pygame.display.update()
 
-def count(text1, text2):
-    largeText = pygame.font.Font('freesansbold.ttf',25)
-    TextSurf, TextRect = text_objects('{} Zaraženih   {} Papira'.format(str(text1), str(text2)), largeText)
-    TextRect= (20,20)
-    screen.blit(TextSurf, TextRect)
-    pygame.display.update()
-
 def count11(text1, text2):
     largeText = pygame.font.Font('freesansbold.ttf',25)
     TextSurf, TextRect = text_objects('{} Zaražen   {} Papir'.format(str(text1), str(text2)), largeText)
@@ -248,6 +233,15 @@ def Victory(action):
     pygame.time.delay(4000)
     screen.fill(black)
     action()
+
+def Title(text):
+    largeText = pygame.font.Font('freesansbold.ttf',115)
+    TextSurf, TextRect = text_objectsb(text, largeText)
+    TextRect.center = (int(SCREEN_WIDTH/2),int(SCREEN_HEIGHT/3))
+    screen.blit(TextSurf, TextRect)
+    
+    pygame.display.update()
+    
     
 def crash(action):
     message_display('Zaražen!')
@@ -259,13 +253,13 @@ def crash(action):
 
     action()
 
-def buttonE(msg,x,y,iw,ih,ic,ac,aw,ah,action=None):
+def buttonE(msg,x,y,iw,ih,ic,ac,aw,ah,fi,fa,action=None):
     mouse = pygame.mouse.get_pos()
     click = pygame.mouse.get_pressed()
     if x+iw > mouse[0] > x and y+ih > mouse[1] > y:
         pygame.draw.rect(screen, ac,(x,y,aw,ah))
-        smallText = pygame.font.SysFont("comicsansms",20)
-        textSurf, textRect = text_objects(msg, smallText)
+        smallText = pygame.font.SysFont("comicsansms",fa)
+        textSurf, textRect = text_objectsb(msg, smallText)
         textRect.center = ( (x+(aw/2)), (y+(ah/2)) )
         screen.blit(textSurf, textRect)
 
@@ -273,61 +267,80 @@ def buttonE(msg,x,y,iw,ih,ic,ac,aw,ah,action=None):
             action()
     else:
         pygame.draw.rect(screen, ic,(x,y,iw,ih))
-        smallText = pygame.font.SysFont("comicsansms",20)
+        smallText = pygame.font.SysFont("comicsansms",fi)
         textSurf, textRect = text_objects(msg, smallText)
         textRect.center = ( (x+(iw/2)), (y+(ih/2)) )
         screen.blit(textSurf, textRect)
 
-def buttonS(msg,x,y,iw,ih,ic,ac,aw,ah,action=None):
+def back(msg,x,y,iw,ih,ic,ac,aw,ah,fi,fa,action=None):
+    global broj_zar
+    global broj_pap
+    global covjek
     mouse = pygame.mouse.get_pos()
     click = pygame.mouse.get_pressed()
     if x+iw > mouse[0] > x and y+ih > mouse[1] > y:
         pygame.draw.rect(screen, ac,(x,y,aw,ah))
-        smallText = pygame.font.SysFont("comicsansms",20)
-        textSurf, textRect = text_objects(msg, smallText)
+        smallText = pygame.font.SysFont("comicsansms",fa)
+        textSurf, textRect = text_objectsb(msg, smallText)
         textRect.center = ( (x+(aw/2)), (y+(ah/2)) )
         screen.blit(textSurf, textRect)
 
-        if click[0] == 1:
-            action()         
+        if click[0] == 1 and action!= None:
+            running = False
+            nema.stop()
+            pygame.mixer.music.stop()
+            broj_zar =0
+            broj_pap=0
+            covjek = 0
+            action()
     else:
         pygame.draw.rect(screen, ic,(x,y,iw,ih))
-        smallText = pygame.font.SysFont("comicsansms",20)
-        textSurf, textRect = text_objects(msg, smallText)
+        smallText = pygame.font.SysFont("comicsansms",fi)
+        textSurf, textRect = text_objectsb(msg, smallText)
         textRect.center = ( (x+(iw/2)), (y+(ih/2)) )
         screen.blit(textSurf, textRect)
 
     
     
- 
 
 def game_intro():
 
+    ADDENEMYI = pygame.USEREVENT + 1
+    pygame.time.set_timer(ADDENEMYI, 650)
+    all_sprites = pygame.sprite.Group()
     clock = pygame.time.Clock()
 
     intro = True
 
     while intro:
+
+        screen.fill(white)
+        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
-                
-        screen.fill(white)
 
+            elif event.type == ADDENEMYI:
+                new_enemy = EnemyI()
+                all_sprites.add(new_enemy)
+                
+        
+        for entity in all_sprites:
+            screen.blit(entity.surf, entity.rect)
 
         mouse = pygame.mouse.get_pos()
 
         smallText = pygame.font.Font("freesansbold.ttf",20)
 
-        buttonE('Endless',SCREEN_WIDTH/3,SCREEN_HEIGHT/2,100,50,green,bright_green,120,60,endless_loop)
-        buttonS('Survival',SCREEN_WIDTH*2/3,SCREEN_HEIGHT/2,100,50,red,bright_red,120,60, survival_loop)
+        buttonE('Endless',SCREEN_WIDTH/3,SCREEN_HEIGHT/2,100,50,green,bright_green,120,60,20,25,endless_loop)
+        buttonE('Survival',SCREEN_WIDTH*2/3,SCREEN_HEIGHT/2,100,50,red,bright_red,120,60,20,25,survival_loop)
         
 
         
-
+        all_sprites.update()
         
-        
+        Title('Virus Attack')
         
         pygame.display.update()
         clock.tick(15)
@@ -341,15 +354,15 @@ def endless_loop():
     pygame.mixer.music.play(loops=-1)
     nema.play()
     x=0
-    player = Player()
+    player = PlayerE()
     papir = Papir()
     enemies = pygame.sprite.Group()
     all_sprites = pygame.sprite.Group()
     all_sprites.add(player)
     ADDENEMYR = pygame.USEREVENT + 2
-    pygame.time.set_timer(ADDENEMYR, 450)
+    pygame.time.set_timer(ADDENEMYR, 700)
     ADDENEMYL = pygame.USEREVENT + 1
-    pygame.time.set_timer(ADDENEMYL, 450)
+    pygame.time.set_timer(ADDENEMYL, 700)
     NEMAPAPIRA = pygame.USEREVENT +3
     pygame.time.set_timer(NEMAPAPIRA, 4500)
 
@@ -435,7 +448,7 @@ def endless_loop():
             ima.play()
             pobjeda(endless_loop)
 
-            
+        back('Back', SCREEN_WIDTH-50,20,40,25,white,white,45,28,10,15,game_intro)
 
         pygame.display.flip()
 
@@ -457,9 +470,9 @@ def survival_loop():
     all_sprites = pygame.sprite.Group()
     all_sprites.add(player)
     ADDENEMYR = pygame.USEREVENT + 2
-    pygame.time.set_timer(ADDENEMYR, 450)
+    pygame.time.set_timer(ADDENEMYR, 700)
     ADDENEMYL = pygame.USEREVENT + 1
-    pygame.time.set_timer(ADDENEMYL, 450)
+    pygame.time.set_timer(ADDENEMYL, 700)
     NEMAPAPIRA = pygame.USEREVENT +3
     pygame.time.set_timer(NEMAPAPIRA, 4500)
 
@@ -514,7 +527,6 @@ def survival_loop():
 
         kolko_jos(covjek)
 
-            
 
         screen.blit(player.surf, player.rect)
         screen.blit(papir.surf, papir.rect)
@@ -545,7 +557,8 @@ def survival_loop():
             ima.play()
             pobjeda(survival_loop)
 
-
+        back('Back', SCREEN_WIDTH-50,20,40,25,white,white,44,28,10,15,game_intro)
+        
         pygame.display.flip()
 
 
