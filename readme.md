@@ -12,7 +12,7 @@ Dodana opcija za povrtak na pocetni menu. Smatram da je igrica gotova i pocet cu
 Novi screencast koji je unutar 8-minutnog okvira zadanog u zadatku na linku https://drive.google.com/file/d/1NsysdvDKtmBl4hFAZlhmfoDWtS9HLTi3/view?usp=sharing
 
 
-Kodu su sada dodani koemntari s objašnjenjem.
+Kodu su sada dodani komentari s objašnjenjem.
 
 Ostavit ću link za screencast s objašnjenjem koda.
  
