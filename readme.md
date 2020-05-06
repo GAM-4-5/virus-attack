@@ -15,4 +15,6 @@ Novi screencast koji je unutar 8-minutnog okvira zadanog u zadatku na linku http
 Kodu su sada dodani komentari s objašnjenjem.
 
 Ostavit ću link za screencast s objašnjenjem koda.
+
+Tu sam postavio i dokumentaciju pa recite ako nešto fali.
  
